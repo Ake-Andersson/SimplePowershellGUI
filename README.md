@@ -5,7 +5,7 @@ For example, you create a package in SCCM / MECM containing the script file and 
 
 You may also replace Icon.png for 25x25 .png file to display a different logo (for example your organisations logo)
 
-If paramaters are not supplied, default values will be used. You should always provide a title and body text.
+If parameters are not supplied, default values will be used. You should always provide a title and body text.
 
 <br>
 <br>
