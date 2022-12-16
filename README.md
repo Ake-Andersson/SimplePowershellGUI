@@ -13,16 +13,24 @@ If parameters are not supplied, default values will be used. You should always p
 <b>Parameters:</b>
 
 [string] Title: Sets the form title, as well as a title text in the form.
+
 [string] Text: Sets a body text of the form.
     
+    
 [string] Button1Text: Sets a text on Button 1. Default value is "OK".
+
 [int] Button1ExitCode: Sets which exit code should be used when user presses the button. Default value is 0.
     
+    
 [bool] Button2Enabled: Decides if Button 2 should be visible and enabled. Default value is $true.
+
 [string] Button2Text: Sets a text on Button 2. Default value is "Cancel".
+
 [int] Button2ExitCode: Sets which exit code should be used when user presses the button. Default value is 1622.
 
+
 [bool] CountdownEnabled: Decides if a countdown timer should be included. Default value is $false.
+
 [int] CountdownTime: Sets the amount of time in seconds the timer will count down. Default value is 3600.
 
 <br>
