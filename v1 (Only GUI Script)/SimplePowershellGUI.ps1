@@ -70,7 +70,7 @@ $IconBox                      = New-Object Windows.Forms.PictureBox
 $IconBox.width                = 25
 $IconBox.height               = 25
 $IconBox.location             = New-Object System.Drawing.Point(20,10)
-$Icon                         = [system.drawing.image]::FromFile("Icon.png")
+$Icon                         = [system.drawing.image]::FromFile("$PSScriptRoot\Icon.png")
 $IconBox.Image                = $Icon
 
 $CountdownLabel               = New-Object system.Windows.Forms.Label
