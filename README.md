@@ -1,45 +1,46 @@
 # SimplePowershellGUI
-A simple customizable powershell GUI, designed for use with Configuration Manager deployments in order to notify users of required deployments and allow them some control.
+A simple customizable powershell GUI, designed for use with Configuration Manager or Intune deployments in order to notify users of required deployments and allow them some control.
 
-For example, you create a package in SCCM / MECM containing the script file and Icon.png file. Then you can call this script file from a Task Sequence with the parameters specified.
+- **v1**: Contains only the GUI script and will work fine if your deployment is in the user context.  
+- **v2**: Contains the GUI script and an additional script for starting the GUI in the users context in order for it to display for a user if the deployment is using for example the system account.  
+- **v3**: Same as v2, but instead of the GUI being a powershell script it has been compiled into an .exe using ps2exe. This is useful if your client is running a restricted powershell executionpolicy, since the users context will not be allowed to run a script in that case. (The GUI script is also provided, if you'd prefer to compile it yourself)
 
-You may also replace Icon.png for 25x25 .png file to display a different logo (for example your organisations logo)
+Note that if you're running script/application control such as Applocker, you might need to create a rule to allow the script and/or exe to run.
 
-If parameters are not supplied, default values will be used. You should always provide a title and body text.
+```PowerShell
+[-Title "<Title>"] [-Text "<Body text>"]
+[-Button1Text "<Button text>"] [-Button1ExitCode <INT>] 
+[-Button2Enabled] [-Button2Text "<Button text>"] [-Button2ExitCode <INT>]
+[-CountdownEnabled] [-CountdownTime <INT>]
+```
 
-<br>
-<br>
+```Text
+-Title: Changes the windows title [Default: SimplePowershellGUI]
+-Text: Changes the body text [Default: This is a default body text.]
+-Button1Text: Changes the text on the first button [Default: OK]
+-Button1ExitCode: The exit code the program will use when user presses the button [Default: 0]
+-Button2Enabled: Switch that enables the second button [Default: not enabled]
+-Button2Text: Changes the text on the second button [Default: Cancel]
+-Button2ExitCode: The exit code the program will use when the user presses the button. (The idea is to fail the deployment so it will autoretry if the user wants to postpone, for example) [Default: 1622]
+-CountdownEnabled: Switch that enabled the countdown timer [Default: not enabled]
+-CountdownTime: Time in seconds that the countdown will start at [Default: 3600]
+```
 
-<b>Parameters:</b>
+```Text
+Usage Examples
 
-[string] Title: Sets the form title, as well as a title text in the form.
+v1 From Powershell:
+.\SimplePowershellGUI -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
 
-[string] Text: Sets a body text of the form.
-    
-    
-[string] Button1Text: Sets a text on Button 1. Default value is "OK".
+v1 From Command Line:
+Powershell.exe -File .\SimplePowershellGUI.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
 
-[int] Button1ExitCode: Sets which exit code should be used when user presses the button. Default value is 0.
-    
-    
-[bool] Button2Enabled: Decides if Button 2 should be visible and enabled. Default value is $true.
+v2 and v3 from Powershell:
+.\StartGUIAsUser.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
 
-[string] Button2Text: Sets a text on Button 2. Default value is "Cancel".
+v2 and v3 from Command Line:
+Powershell.exe -File .\StartGUIAsUser.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
+```
 
-[int] Button2ExitCode: Sets which exit code should be used when user presses the button. Default value is 1622.
+![bild](https://user-images.githubusercontent.com/91835664/221362675-75a2d6f8-15cf-4d33-b7fd-9116c650cd98.png)
 
-
-[bool] CountdownEnabled: Decides if a countdown timer should be included. Default value is $false.
-
-[int] CountdownTime: Sets the amount of time in seconds the timer will count down. Default value is 3600.
-
-<br>
-<br>
-
-<b>Usage examples:</b>
-
-From Powershell:
-
-.\SimplePowershellGUI.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. In order to continue, a restart is required.\`n`nPlease save any open work and press 'Restart' to continue." -Button1Text "Restart" -Button2Text "Postpone" -CountdownEnabled $true -CountdownTime 3600
-
-![bild](https://user-images.githubusercontent.com/91835664/207888586-d920f376-9a1e-4929-9fdf-2eda77fbfcd7.png)
