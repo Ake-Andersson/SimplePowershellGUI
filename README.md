@@ -1,9 +1,7 @@
 # SimplePowershellGUI
 A simple customizable powershell GUI, designed for use with Configuration Manager or Intune deployments in order to notify users of required deployments and allow them some control.
 
-- **v1**: Contains only the GUI script and will work fine if your deployment is in the user context.  
-- **v2**: Contains the GUI script and an additional script for starting the GUI in the users context in order for it to display for a user if the deployment is using for example the system account.  
-- **v3**: Same as v2, but instead of the GUI being a powershell script it has been compiled into an .exe using ps2exe. This is useful if your client is running a restricted powershell executionpolicy, since the users context will not be allowed to run a script in that case. (The GUI script is also provided, if you'd prefer to compile it yourself)
+Since the script GUI itself needs to be an .exe for the purposes of being displayed to the user, I've also provided the .ps1 source in case you would rather compile it into an .exe yourself.
 
 Note that if you're running script/application control such as Applocker, you might need to create a rule to allow the script and/or exe to run.
 
@@ -29,18 +27,16 @@ Note that if you're running script/application control such as Applocker, you mi
 ```Text
 Usage Examples
 
-v1 From Powershell:
+From Powershell:
 .\SimplePowershellGUI -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
 
-v1 From Command Line:
-Powershell.exe -File .\SimplePowershellGUI.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
+From Command-Line:
+powershell.exe -ExecutionPolicy Bypass "%~dp0StartGUIAsUser.ps1" -Title 'Restart Required' -Text 'An application requiring a system reboot is about to be installed. `n`nTo proceed with the installation, please save any open work and press Install, or the system will automatically continue in 60 minutes. `n`nTo postpone installation, press Postpone.' -Button1Text 'Install' -Button1ExitCode 0 -Button2Enabled -Button2Text 'Postpone' -Button2ExitCode 1622 -CountdownEnabled -CountdownTime 3600
 
-v2 and v3 from Powershell:
-.\StartGUIAsUser.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
+My preferred method is to call the script from a batch/cmd script file with parameters split into new lines. See "ExampleDemo.cmd" as an example of this.
 
-v2 and v3 from Command Line:
-Powershell.exe -File .\StartGUIAsUser.ps1 -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
 ```
 
-![bild](https://user-images.githubusercontent.com/91835664/221362675-75a2d6f8-15cf-4d33-b7fd-9116c650cd98.png)
+![bild](https://github.com/Ake-Andersson/SimplePowershellGUI/assets/91835664/f25572f4-f13e-4c95-ae82-96783940b050)
+
 
