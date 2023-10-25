@@ -3,7 +3,11 @@ A simple customizable powershell GUI, designed for use with Configuration Manage
 
 Since the script GUI itself needs to be an .exe for the purposes of being displayed to the user, I've also provided the .ps1 source in case you would rather compile it into an .exe yourself.
 
+The idea behind this solution being that you're able to deploy this GUI with deployments that might require downtime for the user, in order to warn them as well as possibly give them the option to postpone. By setting a non-zero exit code, we can fail the deployment and as such make it retry at a later time.
+
 Note that if you're running script/application control such as Applocker, you might need to create a rule to allow the script and/or exe to run.
+
+Feel free to use/copy/edit/take inspiration from this solution in any way you'd like.
 
 ```PowerShell
 [-Title "<Title>"] [-Text "<Body text>"]
@@ -27,15 +31,14 @@ Note that if you're running script/application control such as Applocker, you mi
 ```Text
 Usage Examples
 
-From Powershell:
-.\SimplePowershellGUI -Title "Restart Required" -Text "An operating system upgrade is in progress. A system restart will be required during the upgrade process.`n`nPlease save any open work and press Restart to continue, or the system will automatically restart in 2 hours." -Button1Text "Restart" -Button2Enabled -Button2Text "Postpone" -CountdownEnabled -CountdownTime 7200
-
 From Command-Line:
 powershell.exe -ExecutionPolicy Bypass "%~dp0StartGUIAsUser.ps1" -Title 'Restart Required' -Text 'An application requiring a system reboot is about to be installed. `n`nTo proceed with the installation, please save any open work and press Install, or the system will automatically continue in 60 minutes. `n`nTo postpone installation, press Postpone.' -Button1Text 'Install' -Button1ExitCode 0 -Button2Enabled -Button2Text 'Postpone' -Button2ExitCode 1622 -CountdownEnabled -CountdownTime 3600
 
+ExampleDemo.cmd:
 My preferred method is to call the script from a batch/cmd script file with parameters split into new lines. See "ExampleDemo.cmd" as an example of this.
 
 ```
+You may also replace Icon.png with any 25x25 png image, such as an image representing your organization.
 
 ![bild](https://github.com/Ake-Andersson/SimplePowershellGUI/assets/91835664/f25572f4-f13e-4c95-ae82-96783940b050)
 
