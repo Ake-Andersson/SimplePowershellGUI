@@ -27,7 +27,7 @@ param (
     [switch]$CountdownEnabled = $true,
     [int]$CountdownTime = 3600,
 
-    #The exit code returned if the user closes the dialog (with the X-button or through task manager) or if the timer expires
+    #The exit code returned if the user closes the dialog (with the X-button or through task manager or similar)
     [int]$DefaultExitCode = 1602,
 
     #If the dialog should always be on top and if the close (corner X-button) and minimize should be enabled
