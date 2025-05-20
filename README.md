@@ -1,45 +1,74 @@
 # SimplePowershellGUI
-A simple customizable powershell GUI, designed for use with Configuration Manager or Intune deployments in order to notify users of required deployments and allow them some control.
-
-Since the script GUI itself needs to be an .exe for the purposes of being displayed to the user, I've also provided the .ps1 source in case you would rather compile it into an .exe yourself.
-
-The idea behind this solution being that you're able to deploy this GUI with deployments that might require downtime for the user, in order to warn them as well as possibly give them the option to postpone. By setting a non-zero exit code, we can fail the deployment and as such make it retry at a later time.
-
-Note that if you're running script/application control such as Applocker, you might need to create a rule to allow the script and/or exe to run.
-
-Feel free to use/copy/edit/take inspiration from this solution in any way you'd like.
-
-```PowerShell
-[-Title "<Title>"] [-Text "<Body text>"]
-[-Button1Text "<Button text>"] [-Button1ExitCode <INT>] 
-[-Button2Enabled] [-Button2Text "<Button text>"] [-Button2ExitCode <INT>]
-[-CountdownEnabled] [-CountdownTime <INT>]
-```
-
-```Text
--Title: Changes the windows title [Default: SimplePowershellGUI]
--Text: Changes the body text [Default: This is a default body text.]
--Button1Text: Changes the text on the first button [Default: OK]
--Button1ExitCode: The exit code the program will use when user presses the button [Default: 0]
--Button2Enabled: Switch that enables the second button [Default: not enabled]
--Button2Text: Changes the text on the second button [Default: Cancel]
--Button2ExitCode: The exit code the program will use when the user presses the button. (The idea is to fail the deployment so it will autoretry if the user wants to postpone, for example) [Default: 1622]
--CountdownEnabled: Switch that enabled the countdown timer [Default: not enabled]
--CountdownTime: Time in seconds that the countdown will start at [Default: 3600]
-```
-
-```Text
-Usage Examples
-
-From Command-Line:
-powershell.exe -ExecutionPolicy Bypass "%~dp0StartGUIAsUser.ps1" -Title 'Restart Required' -Text 'An application requiring a system reboot is about to be installed. `n`nTo proceed with the installation, please save any open work and press Install, or the system will automatically continue in 60 minutes. `n`nTo postpone installation, press Postpone.' -Button1Text 'Install' -Button1ExitCode 0 -Button2Enabled -Button2Text 'Postpone' -Button2ExitCode 1622 -CountdownEnabled -CountdownTime 3600
-
-ExampleDemo.cmd:
-My preferred method is to call the script from a batch/cmd script file with parameters split into new lines. See "ExampleDemo.cmd" as an example of this.
-
-```
-You may also replace Icon.png with any 25x25 png image, such as an image representing your organization.
 
 ![bild](https://github.com/Ake-Andersson/SimplePowershellGUI/assets/91835664/f25572f4-f13e-4c95-ae82-96783940b050)
 
+This project aims to be a simple customizable powershell GUI, to be able to inform and offer users the ability to postpone or cancel required deployments.
+
+Intended for use with Configuration Manager or Intune applications/packages/task sequences/scripts, in cases where other solution such as PSADT or ServiceUI.exe feel more cumbersome or does not work.
+
+The idea behind this solution being that you're able to deploy this GUI with deployments that might require downtime for the user, in order to warn them as well as possibly give them the option to postpone. By setting a non-zero exit code, we can fail the deployment and as such make it retry at a later time.
+
+Feel free to use/copy/edit/take inspiration from this solution in any way you'd like.
+
+In order to use, simply modify the parameters in SimplePowershellGUI.ps1 to reflect what you want to display to the user:
+
+```Text
+[-Title "<Title>"] - The title text of the GUI
+[-Text "<Body text>"] - The body text of the GUI
+[-Button1Text "<Button text>"] - The text of the first button
+[-Button1ExitCode <INT>] - The exit code used when the user presses the first button
+[-Button2Enabled <Boolean>] - If the second button should be enabled
+[-Button2Text "<Button text>"] - The text on the second button
+[-Button2ExitCode <INT>] - The exit code used when the user presses the second button
+[-CountdownEnabled <Boolean>] - If the countdown should be enabled
+[-CountdownTime <INT>] - How much time (in seconds) the countdown is
+[-DefaultExitCode <INT>] - The default exit code, used if the user manages to close the dialog without pressing a button
+[-AlwaysOnTop <Boolean>] - If the dialog window should always be on top of the desktop apps
+[-ShowMinimizeAndClose <Boolean>] - If the dialog window should show the minimize and close (X-button)
+```
+Then call StartGUI.ps1 to open the GUI for the user.
+
+If the GUI is not able to run as a user (if no user is logged on), the script will exit with Exit Code: 1621. If needed, this can be modified by changing the $GUIExitCode at the top of StartGUI.ps1.
+
+
+```Text
+Usage Tips
+
+From Command-Line:
+powershell.exe -ExecutionPolicy Bypass "StartGUI.ps1"
+
+Or from .bat or .cmd file:
+powershell.exe -ExecutionPolicy Bypass "%~dp0StartGUI.ps1"
+
+Example Demo Package - 7-Zip 2409:
+This is an example of a packaged application (7-Zip 2409) I've included simply for demonstration purposes
+
+If you need the application to succeed if no user is logged on:
+Either add the exit code 1621 as a success exit code on your applications OR modify $GUIExitCode at the start of StartGUI.ps1 to 0
+
+To change the icon displayed next to the title text:
+Simply replace Icon.png with any 25x25 .png image, such as an image representing your organization
+
+```
+
+So far tested and verified working with:
+
+Configuration Manager: Applications, Packages, Task Sequence (in FullOS)
+
+Intune: -
+
+
+```Text
+How it works:
+
+StartGUI.ps1 checks if it is running as the SYSTEM or user account.
+
+If it is running as the SYSTEM account, C# code to start a process is loaded and used to start SimplePowershellGUI.ps1 as the logged in user.
+
+If no logged in user is found, the exit code 1621 will be returned. Otherwise, it waits for the exit code from SimplePowershellGUI.ps1.
+
+If the StartGUI.ps1 is already running as a user account, it simply starts the GUI for that same user and awaits the exit code from the GUI.
+
+In addition, StartGUI.ps1 contains a check to use the virtual SysNative-folder if it is running in 32-bit.
+```
 
